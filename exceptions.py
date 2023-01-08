@@ -1,0 +1,2 @@
+class SingletonException(BaseException):
+    pass
