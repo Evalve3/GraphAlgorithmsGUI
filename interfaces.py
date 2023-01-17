@@ -25,15 +25,35 @@ class Subject:
 
 class WindowsSubject(Subject):
     __observers: list
-    __matrix: list
+    __input_matrix: list = []
+    __result_matrix: list = []
+    __input_matrix_size: tuple = [0, 0]
 
     @property
-    def matrix(self):
-        return self.__matrix
+    def input_matrix_size(self):
+        return self.__input_matrix_size
 
-    @matrix.setter
-    def matrix(self, new_matrix: list):
-        self.__matrix = new_matrix
+    @input_matrix_size.setter
+    def input_matrix_size(self, new_size: tuple):
+        self.__input_matrix_size = new_size
+        self.notify_observers()
+
+    @property
+    def input_matrix(self):
+        return self.__input_matrix
+
+    @input_matrix.setter
+    def input_matrix(self, new_matrix: list):
+        self.__input_matrix = new_matrix
+        self.notify_observers()
+
+    @property
+    def result_matrix(self):
+        return self.__result_matrix
+
+    @result_matrix.setter
+    def result_matrix(self, new_matrix: list):
+        self.__result_matrix = new_matrix
         self.notify_observers()
 
     def __init__(self):
@@ -41,7 +61,6 @@ class WindowsSubject(Subject):
 
     def register_observer(self, o: Observer) -> None:
         self.__observers.append(o)
-        print(len(self.__observers))
 
     def remove_observer(self, o: Observer) -> None:
         self.__observers.remove(o)
@@ -54,7 +73,7 @@ class WindowsSubject(Subject):
 class Window(Observer, Toplevel):
     _window_subject: WindowsSubject
 
-    def __init__(self, parent: Tk, window_subject: WindowsSubject):
+    def __init__(self, parent, window_subject: WindowsSubject):
         super().__init__(parent)
         self._window_subject = window_subject
         self._window_subject.register_observer(self)
@@ -84,10 +103,10 @@ class TkObserver(Tk, Observer):
 
 
 class MainWindowTk(TkObserver):
-    __matrix: list
+    __input_matrix: list
 
     def update(self) -> None:
-        self.__matrix = self._window_subject.matrix
+        self.__input_matrix = self._window_subject.input_matrix
 
     @property
     def matrix(self):
